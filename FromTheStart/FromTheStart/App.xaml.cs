@@ -1,8 +1,4 @@
-﻿using FromTheStart.Services;
-using FromTheStart.Views;
-using System;
-using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
+﻿using Xamarin.Forms;
 
 namespace FromTheStart
 {
@@ -13,7 +9,6 @@ namespace FromTheStart
         {
             InitializeComponent();
 
-            DependencyService.Register<MockDataStore>();
             MainPage = new AppShell();
         }
 
