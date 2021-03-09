@@ -1,36 +1,59 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using FromTheStart.Models;
 using Xamarin.Forms;
 
 namespace FromTheStart.Views
 {
     public partial class NotesPage : ContentPage
     {
-        string _fileName =
-                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "notes.txt");
+        
 
         public NotesPage()
         {
             InitializeComponent();
-            if (File.Exists(_fileName))
-            {
-                editor.Text = File.ReadAllText(_fileName);
-            }
         }
 
-        void OnSaveButtonClicked(object sender, EventArgs e)
+        protected override void OnAppearing()
         {
-            File.WriteAllText(_fileName, editor.Text);
+            base.OnAppearing();
+            var notes = new List<Note>();
+            var files = Directory.EnumerateFiles(App.FolderPath, "*.notes.txt");
+            foreach (var filename in files)
+            {
+                notes.Add(new Note
+                {
+                    Filename = filename,
+                    Text = File.ReadAllText(filename),
+                    Date = File.GetCreationTime(filename),
+
+                });
+            }
+            collectionView.ItemsSource = notes
+                .OrderBy(d => d.Date).ToList();
+
 
         }
 
-        void OnDeleteButtonClicked(object sender, EventArgs e)
+
+
+
+        async void OnAddClicked(object sender, EventArgs e)
         {
-            if(File.Exists(_fileName))
+            await Shell.Current.GoToAsync(nameof(NoteEntryPage));
+
+        }
+
+        async void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(e.CurrentSelection != null)
             {
-                File.Delete(_fileName);
+                Note note = (Note)e.CurrentSelection.FirstOrDefault();
+                await Shell.Current.GoToAsync($"{nameof(NoteEntryPage)}?{nameof(NoteEntryPage.ItemId)}={note.Filename}");
+
             }
-            editor.Text = String.Empty;
         }
     }
 }

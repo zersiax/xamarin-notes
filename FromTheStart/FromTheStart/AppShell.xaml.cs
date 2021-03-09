@@ -1,4 +1,6 @@
-﻿using Xamarin.Forms;
+﻿using FromTheStart.Views;
+
+using Xamarin.Forms;
 
 namespace FromTheStart
 {
@@ -7,6 +9,8 @@ namespace FromTheStart
         public AppShell()
         {
             InitializeComponent();
+            Routing.RegisterRoute(nameof(NoteEntryPage), typeof(NoteEntryPage));
+
         }
 
     }
